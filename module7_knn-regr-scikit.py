@@ -3,26 +3,30 @@ from sklearn.neighbors import KNeighborsRegressor
 
 
 class KNNRegressor:
-    def __init__(self, k):
+    def __init__(self, k, n):
         self.k = k
-        self.X_list = []
-        self.Y_list = []
-        self.X = None
-        self.Y = None
+        self.n = n
+        self.count = 0
+
+        # Pre-allocation
+        self.X = np.zeros(n)
+        self.Y = np.zeros(n)
 
     def add_point(self, x, y):
-        self.X_list.append(float(x))
-        self.Y_list.append(float(y))
+        if self.count < self.n:
+            self.X[self.count] = float(x)
+            self.Y[self.count] = float(y)
+            self.count += 1
+        else:
+            print("Error: Dataset is full.")
 
     def finalize(self):
-        self.X = np.array(self.X_list, dtype=float)
-        self.Y = np.array(self.Y_list, dtype=float)
+        pass
 
     def predict(self, query):
-        if self.k > len(self.X):
+        if self.k > self.n:
             return "Error: integer k must be <= N."
 
-        # scikit-learn
         X_2d = self.X.reshape(-1, 1)
 
         knn = KNeighborsRegressor(n_neighbors=self.k)
@@ -36,12 +40,12 @@ def main():
     N = int(input("Enter positive integer N: "))
     k = int(input("Enter positive integer k: "))
 
-    model = KNNRegressor(k)
+    model = KNNRegressor(k, N)
 
     print(f"Enter {N} (x, y) points:")
     for i in range(N):
-        x = float(input(f"Point #{i+1} - x: "))
-        y = float(input(f"Point #{i+1} - y: "))
+        x = float(input(f"Point #{i + 1} - x: "))
+        y = float(input(f"Point #{i + 1} - y: "))
         model.add_point(x, y)
 
     model.finalize()
@@ -58,4 +62,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+    main()
+
 
